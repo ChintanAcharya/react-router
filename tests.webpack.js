@@ -5,10 +5,18 @@ import expect from 'expect'
 
 import { _resetWarned } from './modules/routerWarning'
 
+function formatString(format, args) {
+  return format.replace(/%s/g, function () {
+    return args.shift()
+  })
+}
+
 beforeEach(() => {
   /* eslint-disable no-console */
-  expect.spyOn(console, 'error').andCall(msg => {
+  expect.spyOn(console, 'error').andCall((msgOrFormat, ...formatArgs) => {
     let expected = false
+
+    const msg = formatString(msgOrFormat, formatArgs)
 
     console.error.expected.forEach(about => {
       if (msg.indexOf(about) !== -1) {
